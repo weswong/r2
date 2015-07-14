@@ -152,11 +152,13 @@ def calculate_chunks(chromosome_dict,df,super_missing_df, slice):
             r, d, p, pA, pB, observed_hap_freq, s = interlocus_r2(idx1, idx2, df, super_missing_df)
             values.append((p,r,d,pA, pB, observed_hap_freq, s))
     return values
-    
-            
-file = sys.argv[1]
-processes = int(sys.argv[2])
 
-pool = mp.Pool(processes = processes)
-calculate(file, processes)
+if __name__ == '__main__':
+    freeze_support()
+            
+    file = sys.argv[1]
+    processes = int(sys.argv[2])
+
+    pool = mp.Pool(processes = processes)
+    calculate(file, processes)
 
