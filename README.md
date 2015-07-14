@@ -1,6 +1,7 @@
 # r2
-Requires: pandas, numpy multiprocessing 
-has mpi functionality
+Requires: python 2.7.0 
+          pandas 0.16.1
+          multiprocessing module
 
 argv1 = data
 argv2 = # of threads to run on
