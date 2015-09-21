@@ -69,11 +69,11 @@ def interlocus_r2(idx1, idx2, df, super_missing_df):
     haplotype.drop(missing_sample.index, inplace=True)
     s = float(len(haplotype[5:]))
     
-    
-    loci1 = df[idx1].drop(missing_sample.index, inplace=False)
-    loci2 = df[idx2].drop(missing_sample.index, inplace=False)
-    
+    loci1 = df[idx1].drop(missing_sample.index, inplace=False)[5:]
+    loci2 = df[idx2].drop(missing_sample.index, inplace=False)[5:]
+
     missing_points = (len(df) - len(haplotype))/float(len(df))
+    
     major_prop_idx1, major_prop_idx2 =Counter(loci1)[df[idx1].loc['major_alleles']] / s, Counter(loci2)[df[idx2].loc['major_alleles']] / s
     #major_prop_idx1, major_prop_idx2 =major_prop_find(loci1), major_prop_find(loci2)
     
@@ -84,6 +84,7 @@ def interlocus_r2(idx1, idx2, df, super_missing_df):
     pos2 = str(df[idx2].loc['chrom']) + '.' + str(df[idx2].loc['pos'])  
     
     comparison = pos1 + ':' + pos2
+    print comparison
     #print major_find(haplotype_df[idx1])
     #print major_hap
     
@@ -103,7 +104,7 @@ def interlocus_r2(idx1, idx2, df, super_missing_df):
             Dmax = np.min([-pA*pB, -(1-pA)*(1-pB)])
         else: # D > 0
             Dmax = np.max([pA*(1-pB), (1-pA)*pB])
-        
+
         Dprime = D/float(Dmax)
         #corrected r_square to handle allele frequency
         # D^2 / (Pa(1-Pa)Pb(1-Pb))
@@ -126,7 +127,6 @@ def calculate(file, processes):
     df, super_missing_df, chromosome_dict = file_prep(file)
     r_square, dprime, position = [],[], []
     chromosome_combos = list(itertools.combinations(chromosome_dict.keys(), 2))
-    print chromosome_combos
     total = len(chromosome_combos)
     chunk_size = int(math.ceil(total/float(processes)))
     if chunk_size == 0:
@@ -136,6 +136,7 @@ def calculate(file, processes):
     results = [pool.apply_async(calculate_chunks, args=(chromosome_dict,df,super_missing_df, slice)) for slice in slices]
     output = []
     for p in results:
+        print p.get()
         output += p.get()
     print len(output)
     
@@ -154,7 +155,7 @@ def calculate_chunks(chromosome_dict,df,super_missing_df, slice):
     return values
 
 if __name__ == '__main__':
-    freeze_support()
+    mp.freeze_support()
             
     file = sys.argv[1]
     processes = int(sys.argv[2])
